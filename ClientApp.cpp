@@ -36,6 +36,7 @@ int main()
 	// 4. Initiate the connection with connect or WSAConnect
 	connect(clientSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
 
+	// 5. Close socket and cleanup winsock
 	closesocket(clientSocket);
 	WSACleanup();
 }
