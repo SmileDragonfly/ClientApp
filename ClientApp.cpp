@@ -21,23 +21,44 @@ int main()
 	// 1. WSAStartup
 	WSADATA wsaData;
 	int ret = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	
-	// 2. Create socket
-	SOCKET clientSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	// 3. Setup server address
 	SOCKADDR_IN serverAddress;
 	int port = 9900;
-	int serverAddr = 
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_port = htons(port);
-	serverAddress.sin_addr.s_addr = inet_addr("192.168.68.207");
+	serverAddress.sin_addr.s_addr = inet_addr("192.168.68.214");
 
 	// 4. Initiate the connection with connect or WSAConnect
-	connect(clientSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+			// 2. Create socket
+	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	while (1)
+	{
+		int iResult = connect(clientSocket, (SOCKADDR*)&serverAddress, sizeof(serverAddress));
+		if (iResult == SOCKET_ERROR) 
+		{
+			std::cout << "Cant connect to server" << std::endl;
+			continue;
+		}
+		std::cout << "Connected to server" << std::endl;
+		break;
+	}
+
+	// Send data to server
+	int count = 0;
+	while (1)
+	{
+		char buff[] = "I am client";
+		int buffLength = sizeof(buff);
+		int iRet = send(clientSocket, (char*)buff, sizeof(buff), 0);
+		if (iRet == SOCKET_ERROR)
+		{
+			std::cout << "Client cant send data" << std::endl;
+		}
+		Sleep(500);
+	}
 
 	// 5. Close socket and cleanup winsock
-	closesocket(clientSocket);
 	WSACleanup();
 }
 
